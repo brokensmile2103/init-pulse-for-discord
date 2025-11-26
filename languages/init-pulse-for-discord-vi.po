@@ -1,0 +1,123 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Init Discord Hub\n"
+"Language: vi_VN\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Init Discord Hub"
+msgstr "Init Discord Hub"
+
+msgid "Send notifications to Discord via webhooks. Minimal, fast, and ready for extension."
+msgstr "Gửi thông báo tới Discord qua webhook. Nhẹ, nhanh và dễ mở rộng."
+
+msgid "Settings"
+msgstr "Cài đặt"
+
+msgid "Discord Notifications"
+msgstr "Thông báo Discord"
+
+msgid "Enable Discord Notifications"
+msgstr "Bật thông báo Discord"
+
+msgid "Send notifications to Discord when content is published."
+msgstr "Gửi thông báo đến Discord khi bài viết được đăng."
+
+msgid "This page configures options only. Hook the actual sending into publish/update events."
+msgstr "Trang này chỉ cấu hình cài đặt. Việc gửi thông báo sẽ được thực hiện khi có sự kiện đăng / cập nhật bài viết."
+
+msgid "Events to Notify"
+msgstr "Sự kiện để thông báo"
+
+msgid "Notify On"
+msgstr "Thông báo khi"
+
+msgid "A new post is published (post type: post)"
+msgstr "Một bài viết mới được đăng (post type: post)"
+
+msgid "An existing post is updated (status remains publish)"
+msgstr "Một bài viết đang đăng được cập nhật"
+
+msgid "Webhook & Identity"
+msgstr "Webhook & Danh tính"
+
+msgid "Discord Webhook URL"
+msgstr "Discord Webhook URL"
+
+msgid "Paste the full webhook URL from your Discord channel."
+msgstr "Dán URL webhook đầy đủ lấy từ kênh Discord của bạn."
+
+msgid "Default Username"
+msgstr "Tên mặc định"
+
+msgid "Shown as the sender name (e.g., \"Init Bot\")."
+msgstr "Hiển thị như tên người gửi (ví dụ: \"Init Bot\")."
+
+msgid "Avatar URL"
+msgstr "URL ảnh đại diện"
+
+msgid "Public image URL used as the webhook avatar (optional)."
+msgstr "URL ảnh đại diện cho webhook (không bắt buộc)."
+
+msgid "Content & Media"
+msgstr "Nội dung & Hình ảnh"
+
+msgid "Include Featured Image"
+msgstr "Đính kèm ảnh đại diện"
+
+msgid "Attach the featured image to the Discord embed (if available)."
+msgstr "Đính kèm ảnh đại diện của bài viết vào embed gửi Discord (nếu có)."
+
+msgid "Image Size"
+msgstr "Kích thước ảnh"
+
+msgid "Message Template"
+msgstr "Mẫu tin nhắn"
+
+msgid "New/Updated Post Template"
+msgstr "Mẫu thông báo bài viết mới / cập nhật"
+
+msgid "Available placeholders:"
+msgstr "Các placeholder có thể dùng:"
+
+msgid "Post title"
+msgstr "Tiêu đề bài viết"
+
+msgid "Post title linked to URL"
+msgstr "Tiêu đề bài viết (đính kèm liên kết)"
+
+msgid "Post URL"
+msgstr "URL bài viết"
+
+msgid "Post excerpt (trimmed)"
+msgstr "Tóm tắt bài viết"
+
+msgid "Your site name"
+msgstr "Tên website của bạn"
+
+msgid "Reliability & Safety"
+msgstr "Độ tin cậy & An toàn"
+
+msgid "Request Timeout (seconds)"
+msgstr "Thời gian chờ (giây)"
+
+msgid "Retry Attempts"
+msgstr "Số lần thử lại"
+
+msgid "Discord Role ID"
+msgstr "Discord Role ID"
+
+msgid "Mention this role when notifying posts in this term."
+msgstr "Nhắc role này khi gửi thông báo bài viết thuộc danh mục/thẻ này."
+
+msgid "Enter Role ID for this term"
+msgstr "Nhập Role ID cho danh mục/thẻ này"
+
+msgid "Discord Role ID (all-posts role)"
+msgstr "Discord Role ID (role toàn bộ bài viết)"
+
+msgid "Enter Role ID for all-posts notifications (optional)"
+msgstr "Nhập Role ID cho thông báo toàn bộ bài viết (tùy chọn)"
+
+msgid "Optional broader role subscribed to all updates."
+msgstr "Tùy chọn — role nhận mọi thông báo."

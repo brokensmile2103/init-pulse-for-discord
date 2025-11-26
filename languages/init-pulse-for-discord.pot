@@ -1,0 +1,123 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Init Discord Hub\n"
+"Language: vi_VN\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Init Discord Hub"
+msgstr ""
+
+msgid "Send notifications to Discord via webhooks. Minimal, fast, and ready for extension."
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Discord Notifications"
+msgstr ""
+
+msgid "Enable Discord Notifications"
+msgstr ""
+
+msgid "Send notifications to Discord when content is published."
+msgstr ""
+
+msgid "This page configures options only. Hook the actual sending into publish/update events."
+msgstr ""
+
+msgid "Events to Notify"
+msgstr ""
+
+msgid "Notify On"
+msgstr ""
+
+msgid "A new post is published (post type: post)"
+msgstr ""
+
+msgid "An existing post is updated (status remains publish)"
+msgstr ""
+
+msgid "Webhook & Identity"
+msgstr ""
+
+msgid "Discord Webhook URL"
+msgstr ""
+
+msgid "Paste the full webhook URL from your Discord channel."
+msgstr ""
+
+msgid "Default Username"
+msgstr ""
+
+msgid "Shown as the sender name (e.g., \"Init Bot\")."
+msgstr ""
+
+msgid "Avatar URL"
+msgstr ""
+
+msgid "Public image URL used as the webhook avatar (optional)."
+msgstr ""
+
+msgid "Content & Media"
+msgstr ""
+
+msgid "Include Featured Image"
+msgstr ""
+
+msgid "Attach the featured image to the Discord embed (if available)."
+msgstr ""
+
+msgid "Image Size"
+msgstr ""
+
+msgid "Message Template"
+msgstr ""
+
+msgid "New/Updated Post Template"
+msgstr ""
+
+msgid "Available placeholders:"
+msgstr ""
+
+msgid "Post title"
+msgstr ""
+
+msgid "Post title linked to URL"
+msgstr ""
+
+msgid "Post URL"
+msgstr ""
+
+msgid "Post excerpt (trimmed)"
+msgstr ""
+
+msgid "Your site name"
+msgstr ""
+
+msgid "Reliability & Safety"
+msgstr ""
+
+msgid "Request Timeout (seconds)"
+msgstr ""
+
+msgid "Retry Attempts"
+msgstr ""
+
+msgid "Discord Role ID"
+msgstr ""
+
+msgid "Mention this role when notifying posts in this term."
+msgstr ""
+
+msgid "Enter Role ID for this term"
+msgstr ""
+
+msgid "Discord Role ID (all-posts role)"
+msgstr ""
+
+msgid "Enter Role ID for all-posts notifications (optional)"
+msgstr ""
+
+msgid "Optional broader role subscribed to all updates."
+msgstr ""
