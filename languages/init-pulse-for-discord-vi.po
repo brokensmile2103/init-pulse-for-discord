@@ -5,11 +5,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Init Discord Hub"
-msgstr "Init Discord Hub"
+msgid "Init Pulse For Discord"
+msgstr "Init Pulse For Discord"
 
-msgid "Send notifications to Discord via webhooks. Minimal, fast, and ready for extension."
-msgstr "Gửi thông báo tới Discord qua webhook. Nhẹ, nhanh và dễ mở rộng."
+msgid "Send notifications to Discord via webhooks. Custom post types, rich embeds, test messages, and a delivery log."
+msgstr "Gửi thông báo tới Discord qua webhook. Hỗ trợ custom post type, rich embed, tin nhắn thử và nhật ký gửi."
 
 msgid "Settings"
 msgstr "Cài đặt"
@@ -32,11 +32,14 @@ msgstr "Sự kiện để thông báo"
 msgid "Notify On"
 msgstr "Thông báo khi"
 
-msgid "A new post is published (post type: post)"
-msgstr "Một bài viết mới được đăng (post type: post)"
+msgid "A tracked item is published"
+msgstr "Một nội dung được theo dõi được đăng"
 
-msgid "An existing post is updated (status remains publish)"
-msgstr "Một bài viết đang đăng được cập nhật"
+msgid "An existing item is updated (status remains publish)"
+msgstr "Một nội dung đang đăng được cập nhật"
+
+msgid "Applies to whichever post types are selected above."
+msgstr "Áp dụng cho các loại nội dung đã chọn ở trên."
 
 msgid "Webhook & Identity"
 msgstr "Webhook & Danh tính"
@@ -121,3 +124,120 @@ msgstr "Nhập Role ID cho thông báo toàn bộ bài viết (tùy chọn)"
 
 msgid "Optional broader role subscribed to all updates."
 msgstr "Tùy chọn — role nhận mọi thông báo."
+msgid "Post Types"
+msgstr "Loại nội dung"
+
+msgid "Notify These Post Types"
+msgstr "Loại nội dung cần thông báo"
+
+msgid "Choose which post types should trigger a Discord notification. Custom post types are supported."
+msgstr "Chọn loại nội dung sẽ kích hoạt thông báo Discord. Hỗ trợ cả custom post type."
+
+msgid "Send Test Message"
+msgstr "Gửi tin nhắn thử"
+
+msgid "Sending…"
+msgstr "Đang gửi…"
+
+msgid "Use Rich Embed"
+msgstr "Dùng Rich Embed"
+
+msgid "Send a formatted embed (title, description, color, footer) instead of plain text."
+msgstr "Gửi embed có định dạng (tiêu đề, mô tả, màu sắc, footer) thay vì văn bản thuần."
+
+msgid "When disabled, the plugin falls back to the plain-text format used before version 1.1."
+msgstr "Khi tắt, plugin sẽ dùng định dạng văn bản thuần như trước phiên bản 1.1."
+
+msgid "Embed Color"
+msgstr "Màu Embed"
+
+msgid "Accent color shown on the left edge of the embed."
+msgstr "Màu nhấn hiển thị ở cạnh trái của embed."
+
+msgid "Used as the embed description when Rich Embed is enabled, or as the full message otherwise."
+msgstr "Dùng làm phần mô tả của embed khi bật Rich Embed, hoặc làm toàn bộ nội dung tin nhắn nếu tắt."
+
+msgid "Post author display name"
+msgstr "Tên hiển thị của tác giả"
+
+msgid "Comma-separated category names"
+msgstr "Danh sách tên danh mục, phân tách bằng dấu phẩy"
+
+msgid "Comma-separated tag names"
+msgstr "Danh sách tên thẻ, phân tách bằng dấu phẩy"
+
+msgid "Post type label"
+msgstr "Tên loại nội dung"
+
+msgid "Published date (site format)"
+msgstr "Ngày đăng (theo định dạng website)"
+
+msgid "Delivery Log"
+msgstr "Nhật ký gửi"
+
+msgid "Shows the last %d webhook deliveries (newest first) for troubleshooting."
+msgstr "Hiển thị %d lần gửi webhook gần nhất (mới nhất trước) để hỗ trợ khắc phục sự cố."
+
+msgid "No deliveries yet."
+msgstr "Chưa có lần gửi nào."
+
+msgid "Time"
+msgstr "Thời gian"
+
+msgid "Item"
+msgstr "Nội dung"
+
+msgid "Status"
+msgstr "Trạng thái"
+
+msgid "Detail"
+msgstr "Chi tiết"
+
+msgid "Success"
+msgstr "Thành công"
+
+msgid "Error"
+msgstr "Lỗi"
+
+msgid "Clear Log"
+msgstr "Xóa nhật ký"
+
+msgid "Delivery log cleared."
+msgstr "Đã xóa nhật ký gửi."
+
+msgid "You are not allowed to do this."
+msgstr "Bạn không có quyền thực hiện thao tác này."
+
+msgid "Please enter a webhook URL first."
+msgstr "Vui lòng nhập URL webhook trước."
+
+msgid "This does not look like a valid Discord webhook URL."
+msgstr "URL này có vẻ không phải webhook Discord hợp lệ."
+
+msgid "Test message"
+msgstr "Tin nhắn thử"
+
+msgid "Init Pulse For Discord is correctly configured on %s."
+msgstr "Init Pulse For Discord đã được cấu hình đúng trên %s."
+
+msgid "✅ Test message from %s — Init Pulse For Discord is configured correctly."
+msgstr "✅ Tin nhắn thử từ %s — Init Pulse For Discord đã được cấu hình đúng."
+
+msgid "Delivered"
+msgstr "Đã gửi"
+
+msgid "Test message sent! Check your Discord channel."
+msgstr "Đã gửi tin nhắn thử! Kiểm tra kênh Discord của bạn."
+
+msgid "Discord webhook responded with HTTP %d."
+msgstr "Webhook Discord phản hồi với mã HTTP %d."
+
+msgid "Discord webhook unreachable after retries."
+msgstr "Không thể kết nối webhook Discord sau nhiều lần thử lại."
+
+msgid "New post"
+msgstr "Bài viết mới"
+
+msgid "Update"
+msgstr "Cập nhật"
+

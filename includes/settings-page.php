@@ -20,6 +20,35 @@ add_action( 'admin_menu', function () {
 });
 
 // ==========================================================
+// Sanitize callbacks
+// ==========================================================
+
+// Keep only valid, currently-selectable post type slugs.
+function init_plugin_suite_pulse_for_discord_sanitize_post_types( $value ) {
+    if ( ! is_array( $value ) ) {
+        return array();
+    }
+
+    $valid = array_keys( init_plugin_suite_pulse_for_discord_get_selectable_post_types() );
+    $clean = array();
+
+    foreach ( $value as $post_type ) {
+        $post_type = sanitize_key( $post_type );
+        if ( in_array( $post_type, $valid, true ) ) {
+            $clean[] = $post_type;
+        }
+    }
+
+    return array_values( array_unique( $clean ) );
+}
+
+// Fall back to the Discord brand color when an invalid/empty hex is submitted.
+function init_plugin_suite_pulse_for_discord_sanitize_color( $value ) {
+    $color = sanitize_hex_color( $value );
+    return $color ? $color : '#5865F2';
+}
+
+// ==========================================================
 // Register Settings
 // ==========================================================
 add_action( 'admin_init', function () {
@@ -30,6 +59,12 @@ add_action( 'admin_init', function () {
 
     register_setting( $group, 'init_plugin_suite_pulse_for_discord_enable', [
         'sanitize_callback' => $sanitize_bool,
+    ]);
+
+    register_setting( $group, 'init_plugin_suite_pulse_for_discord_post_types', [
+        'type'              => 'array',
+        'sanitize_callback' => 'init_plugin_suite_pulse_for_discord_sanitize_post_types',
+        'default'           => array( 'post' ),
     ]);
 
     register_setting( $group, 'init_plugin_suite_pulse_for_discord_webhook_url', [
@@ -60,6 +95,14 @@ add_action( 'admin_init', function () {
         'sanitize_callback' => 'sanitize_text_field',
     ]);
 
+    register_setting( $group, 'init_plugin_suite_pulse_for_discord_enable_rich_embed', [
+        'sanitize_callback' => $sanitize_bool,
+    ]);
+
+    register_setting( $group, 'init_plugin_suite_pulse_for_discord_embed_color', [
+        'sanitize_callback' => 'init_plugin_suite_pulse_for_discord_sanitize_color',
+    ]);
+
     register_setting( $group, 'init_plugin_suite_pulse_for_discord_message_template_post', [
         'sanitize_callback' => 'sanitize_textarea_field',
     ]);
@@ -74,12 +117,102 @@ add_action( 'admin_init', function () {
 });
 
 // ==========================================================
+// Assets (settings screen only)
+// ==========================================================
+add_action( 'admin_enqueue_scripts', function ( $hook ) {
+
+    if ( 'settings_page_' . INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_SLUG !== $hook ) {
+        return;
+    }
+
+    // No standalone file needed for a handful of lines of vanilla JS: register a
+    // sourceless handle and attach the code via wp_add_inline_script() instead.
+    wp_register_script( 'init-plugin-suite-pulse-for-discord-admin', false, array(), INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_VERSION, true );
+    wp_enqueue_script( 'init-plugin-suite-pulse-for-discord-admin' );
+
+    wp_localize_script( 'init-plugin-suite-pulse-for-discord-admin', 'initPulseForDiscord', array(
+        'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+        'nonce'   => wp_create_nonce( 'init_plugin_suite_pulse_for_discord_test' ),
+        'i18n'    => array(
+            'sending' => __( 'Sending…', 'init-pulse-for-discord' ),
+            'send'    => __( 'Send Test Message', 'init-pulse-for-discord' ),
+        ),
+    ) );
+
+    $inline_js = <<<'JS'
+document.addEventListener( 'DOMContentLoaded', function () {
+	var btn = document.getElementById( 'init-pulse-for-discord-test-btn' );
+	if ( ! btn ) {
+		return;
+	}
+	var result = document.getElementById( 'init-pulse-for-discord-test-result' );
+
+	btn.addEventListener( 'click', function ( event ) {
+		event.preventDefault();
+
+		var webhookEl  = document.getElementById( 'init_plugin_suite_pulse_for_discord_webhook_url' );
+		var usernameEl = document.getElementById( 'init_plugin_suite_pulse_for_discord_username' );
+		var avatarEl   = document.getElementById( 'init_plugin_suite_pulse_for_discord_avatar' );
+		var richEl     = document.getElementById( 'init_plugin_suite_pulse_for_discord_enable_rich_embed' );
+		var colorEl    = document.getElementById( 'init_plugin_suite_pulse_for_discord_embed_color' );
+
+		var params = new URLSearchParams();
+		params.append( 'action', 'init_plugin_suite_pulse_for_discord_test' );
+		params.append( 'nonce', initPulseForDiscord.nonce );
+		params.append( 'webhook', webhookEl ? webhookEl.value : '' );
+		params.append( 'username', usernameEl ? usernameEl.value : '' );
+		params.append( 'avatar', avatarEl ? avatarEl.value : '' );
+		params.append( 'rich', richEl && richEl.checked ? '1' : '0' );
+		params.append( 'color', colorEl ? colorEl.value : '#5865F2' );
+
+		btn.disabled = true;
+		var originalLabel = btn.textContent;
+		btn.textContent = initPulseForDiscord.i18n.sending;
+		if ( result ) {
+			result.textContent = '';
+		}
+
+		fetch( initPulseForDiscord.ajaxUrl, {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: params.toString()
+		} )
+			.then( function ( response ) { return response.json(); } )
+			.then( function ( data ) {
+				if ( ! result ) {
+					return;
+				}
+				result.textContent = data && data.data && data.data.message ? data.data.message : '';
+				result.style.color = data && data.success ? '#0a7d2c' : '#b32d2e';
+			} )
+			.catch( function () {
+				if ( result ) {
+					result.textContent = initPulseForDiscord.i18n.send;
+				}
+			} )
+			.finally( function () {
+				btn.disabled = false;
+				btn.textContent = originalLabel;
+			} );
+	} );
+} );
+JS;
+
+    wp_add_inline_script( 'init-plugin-suite-pulse-for-discord-admin', $inline_js );
+});
+
+// ==========================================================
 // Render Page
 // ==========================================================
 function init_plugin_suite_pulse_for_discord_render_settings_page() {
 
     // Defaults
     $enabled      = get_option( 'init_plugin_suite_pulse_for_discord_enable', '0' );
+    $post_types   = get_option( 'init_plugin_suite_pulse_for_discord_post_types', array( 'post' ) );
+    if ( ! is_array( $post_types ) ) {
+        $post_types = array( 'post' );
+    }
 
     $webhook      = get_option( 'init_plugin_suite_pulse_for_discord_webhook_url', '' );
     $username     = get_option( 'init_plugin_suite_pulse_for_discord_username', get_bloginfo( 'name' ) );
@@ -91,10 +224,22 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
     $include_feat = get_option( 'init_plugin_suite_pulse_for_discord_include_featured', '1' );
     $image_size   = get_option( 'init_plugin_suite_pulse_for_discord_image_size', 'full' );
 
+    $rich_embed   = get_option( 'init_plugin_suite_pulse_for_discord_enable_rich_embed', '1' );
+    $embed_color  = get_option( 'init_plugin_suite_pulse_for_discord_embed_color', '#5865F2' );
+
     $template_post = get_option( 'init_plugin_suite_pulse_for_discord_message_template_post', "{title_url}\n— {site_name}" );
 
     $timeout      = absint( get_option( 'init_plugin_suite_pulse_for_discord_timeout', 8 ) );
     $retry        = absint( get_option( 'init_plugin_suite_pulse_for_discord_retry', 1 ) );
+
+    $selectable_post_types = init_plugin_suite_pulse_for_discord_get_selectable_post_types();
+
+    // Read-only display flag only; the actual Clear Log action is nonce-verified
+    // in includes/delivery-log.php before this redirect ever happens.
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ( isset( $_GET['log_cleared'] ) ) {
+        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Delivery log cleared.', 'init-pulse-for-discord' ) . '</p></div>';
+    }
 
     ?>
 
@@ -123,6 +268,27 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
                     </td>
                 </tr>
 
+                <tr class="idh-dependent"><th colspan="2"><h2><?php esc_html_e( 'Post Types', 'init-pulse-for-discord' ); ?></h2></th></tr>
+
+                <tr class="idh-dependent">
+                    <th scope="row"><?php esc_html_e( 'Notify These Post Types', 'init-pulse-for-discord' ); ?></th>
+                    <td>
+                        <?php foreach ( $selectable_post_types as $post_type ) : ?>
+                            <label style="display:block;margin-bottom:6px;">
+                                <input type="checkbox"
+                                       name="init_plugin_suite_pulse_for_discord_post_types[]"
+                                       value="<?php echo esc_attr( $post_type->name ); ?>"
+                                       <?php checked( in_array( $post_type->name, $post_types, true ) ); ?>>
+                                <?php echo esc_html( $post_type->labels->singular_name ); ?>
+                                <code><?php echo esc_html( $post_type->name ); ?></code>
+                            </label>
+                        <?php endforeach; ?>
+                        <p class="description">
+                            <?php esc_html_e( 'Choose which post types should trigger a Discord notification. Custom post types are supported.', 'init-pulse-for-discord' ); ?>
+                        </p>
+                    </td>
+                </tr>
+
                 <tr class="idh-dependent"><th colspan="2"><h2><?php esc_html_e( 'Events to Notify', 'init-pulse-for-discord' ); ?></h2></th></tr>
 
                 <tr class="idh-dependent">
@@ -132,16 +298,16 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
                             <input type="checkbox"
                                    name="init_plugin_suite_pulse_for_discord_notify_new_post"
                                    value="1" <?php checked( $notify_post, '1' ); ?>>
-                            <?php esc_html_e( 'A new post is published (post type: post)', 'init-pulse-for-discord' ); ?>
+                            <?php esc_html_e( 'A tracked item is published', 'init-pulse-for-discord' ); ?>
                         </label>
                         <label style="display:block;">
                             <input type="checkbox"
                                    name="init_plugin_suite_pulse_for_discord_notify_post_update"
                                    value="1" <?php checked( $notify_update, '1' ); ?>>
-                            <?php esc_html_e( 'An existing post is updated (status remains publish)', 'init-pulse-for-discord' ); ?>
+                            <?php esc_html_e( 'An existing item is updated (status remains publish)', 'init-pulse-for-discord' ); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e( 'Targets standard blog posts only. Custom post types can be added later via filters or extensions.', 'init-pulse-for-discord' ); ?>
+                            <?php esc_html_e( 'Applies to whichever post types are selected above.', 'init-pulse-for-discord' ); ?>
                         </p>
                     </td>
                 </tr>
@@ -156,7 +322,11 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
                                id="init_plugin_suite_pulse_for_discord_webhook_url"
                                value="<?php echo esc_attr( $webhook ); ?>"
                                placeholder="https://discord.com/api/webhooks/XXX/YYY" />
+                        <button type="button" class="button" id="init-pulse-for-discord-test-btn">
+                            <?php esc_html_e( 'Send Test Message', 'init-pulse-for-discord' ); ?>
+                        </button>
                         <p class="description"><?php esc_html_e( 'Paste the full webhook URL from your Discord channel.', 'init-pulse-for-discord' ); ?></p>
+                        <p><span id="init-pulse-for-discord-test-result"></span></p>
                     </td>
                 </tr>
 
@@ -211,6 +381,35 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
                     </td>
                 </tr>
 
+                <tr class="idh-dependent"><th colspan="2"><h2><?php esc_html_e( 'Embed Style', 'init-pulse-for-discord' ); ?></h2></th></tr>
+
+                <tr class="idh-dependent">
+                    <th scope="row"><label for="init_plugin_suite_pulse_for_discord_enable_rich_embed"><?php esc_html_e( 'Use Rich Embed', 'init-pulse-for-discord' ); ?></label></th>
+                    <td>
+                        <label>
+                            <input type="checkbox"
+                                   name="init_plugin_suite_pulse_for_discord_enable_rich_embed"
+                                   id="init_plugin_suite_pulse_for_discord_enable_rich_embed"
+                                   value="1" <?php checked( $rich_embed, '1' ); ?>>
+                            <?php esc_html_e( 'Send a formatted embed (title, description, color, footer) instead of plain text.', 'init-pulse-for-discord' ); ?>
+                        </label>
+                        <p class="description">
+                            <?php esc_html_e( 'When disabled, the plugin falls back to the plain-text format used before version 1.1.', 'init-pulse-for-discord' ); ?>
+                        </p>
+                    </td>
+                </tr>
+
+                <tr class="idh-dependent">
+                    <th scope="row"><label for="init_plugin_suite_pulse_for_discord_embed_color"><?php esc_html_e( 'Embed Color', 'init-pulse-for-discord' ); ?></label></th>
+                    <td>
+                        <input type="color"
+                               name="init_plugin_suite_pulse_for_discord_embed_color"
+                               id="init_plugin_suite_pulse_for_discord_embed_color"
+                               value="<?php echo esc_attr( $embed_color ? $embed_color : '#5865F2' ); ?>">
+                        <p class="description"><?php esc_html_e( 'Accent color shown on the left edge of the embed.', 'init-pulse-for-discord' ); ?></p>
+                    </td>
+                </tr>
+
                 <tr class="idh-dependent"><th colspan="2"><h2><?php esc_html_e( 'Message Template', 'init-pulse-for-discord' ); ?></h2></th></tr>
 
                 <tr class="idh-dependent">
@@ -222,12 +421,18 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
                             echo esc_textarea( $template_post );
                         ?></textarea>
                         <p class="description">
+                            <?php esc_html_e( 'Used as the embed description when Rich Embed is enabled, or as the full message otherwise.', 'init-pulse-for-discord' ); ?><br>
                             <?php esc_html_e( 'Available placeholders:', 'init-pulse-for-discord' ); ?><br>
                             <code>{title}</code> – <?php esc_html_e( 'Post title', 'init-pulse-for-discord' ); ?><br>
                             <code>{title_url}</code> – <?php esc_html_e( 'Post title linked to URL', 'init-pulse-for-discord' ); ?><br>
                             <code>{url}</code> – <?php esc_html_e( 'Post URL', 'init-pulse-for-discord' ); ?><br>
                             <code>{excerpt}</code> – <?php esc_html_e( 'Post excerpt (trimmed)', 'init-pulse-for-discord' ); ?><br>
-                            <code>{site_name}</code> – <?php esc_html_e( 'Your site name', 'init-pulse-for-discord' ); ?>
+                            <code>{site_name}</code> – <?php esc_html_e( 'Your site name', 'init-pulse-for-discord' ); ?><br>
+                            <code>{author}</code> – <?php esc_html_e( 'Post author display name', 'init-pulse-for-discord' ); ?><br>
+                            <code>{categories}</code> – <?php esc_html_e( 'Comma-separated category names', 'init-pulse-for-discord' ); ?><br>
+                            <code>{tags}</code> – <?php esc_html_e( 'Comma-separated tag names', 'init-pulse-for-discord' ); ?><br>
+                            <code>{post_type}</code> – <?php esc_html_e( 'Post type label', 'init-pulse-for-discord' ); ?><br>
+                            <code>{date}</code> – <?php esc_html_e( 'Published date (site format)', 'init-pulse-for-discord' ); ?>
                         </p>
                     </td>
                 </tr>
@@ -257,6 +462,66 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
 
             <?php submit_button(); ?>
         </form>
+
+        <hr>
+
+        <h2><?php esc_html_e( 'Delivery Log', 'init-pulse-for-discord' ); ?></h2>
+        <p class="description">
+            <?php
+            echo esc_html(
+                sprintf(
+                    /* translators: %d: maximum number of stored log entries. */
+                    __( 'Shows the last %d webhook deliveries (newest first) for troubleshooting.', 'init-pulse-for-discord' ),
+                    INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_LOG_MAX
+                )
+            );
+            ?>
+        </p>
+
+        <?php
+        $log = array_reverse( init_plugin_suite_pulse_for_discord_get_log() );
+
+        if ( empty( $log ) ) :
+            ?>
+            <p><?php esc_html_e( 'No deliveries yet.', 'init-pulse-for-discord' ); ?></p>
+            <?php
+        else :
+            ?>
+            <table class="widefat striped" style="max-width:900px;">
+                <thead>
+                    <tr>
+                        <th><?php esc_html_e( 'Time', 'init-pulse-for-discord' ); ?></th>
+                        <th><?php esc_html_e( 'Item', 'init-pulse-for-discord' ); ?></th>
+                        <th><?php esc_html_e( 'Status', 'init-pulse-for-discord' ); ?></th>
+                        <th><?php esc_html_e( 'Detail', 'init-pulse-for-discord' ); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ( $log as $entry ) : ?>
+                        <tr>
+                            <td><?php echo esc_html( isset( $entry['time'] ) ? $entry['time'] : '' ); ?></td>
+                            <td><?php echo esc_html( isset( $entry['title'] ) ? $entry['title'] : '' ); ?></td>
+                            <td>
+                                <?php if ( isset( $entry['status'] ) && 'success' === $entry['status'] ) : ?>
+                                    <span style="color:#0a7d2c;">● <?php esc_html_e( 'Success', 'init-pulse-for-discord' ); ?></span>
+                                <?php else : ?>
+                                    <span style="color:#b32d2e;">● <?php esc_html_e( 'Error', 'init-pulse-for-discord' ); ?></span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo esc_html( isset( $entry['message'] ) ? $entry['message'] : '' ); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-top:12px;">
+                <input type="hidden" name="action" value="init_plugin_suite_pulse_for_discord_clear_log">
+                <?php wp_nonce_field( 'init_plugin_suite_pulse_for_discord_clear_log' ); ?>
+                <?php submit_button( __( 'Clear Log', 'init-pulse-for-discord' ), 'secondary', 'submit', false ); ?>
+            </form>
+            <?php
+        endif;
+        ?>
     </div>
 
     <?php

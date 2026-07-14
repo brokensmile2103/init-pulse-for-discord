@@ -16,6 +16,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 $options = array(
     'init_plugin_suite_pulse_for_discord_enable',
+    'init_plugin_suite_pulse_for_discord_post_types',
     'init_plugin_suite_pulse_for_discord_webhook_url',
     'init_plugin_suite_pulse_for_discord_username',
     'init_plugin_suite_pulse_for_discord_avatar',
@@ -23,9 +24,12 @@ $options = array(
     'init_plugin_suite_pulse_for_discord_notify_post_update',
     'init_plugin_suite_pulse_for_discord_include_featured',
     'init_plugin_suite_pulse_for_discord_image_size',
+    'init_plugin_suite_pulse_for_discord_enable_rich_embed',
+    'init_plugin_suite_pulse_for_discord_embed_color',
     'init_plugin_suite_pulse_for_discord_message_template_post',
     'init_plugin_suite_pulse_for_discord_timeout',
     'init_plugin_suite_pulse_for_discord_retry',
+    'init_plugin_suite_pulse_for_discord_log',
 );
 
 foreach ( $options as $option ) {

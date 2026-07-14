@@ -5,10 +5,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Init Discord Hub"
+msgid "Init Pulse For Discord"
 msgstr ""
 
-msgid "Send notifications to Discord via webhooks. Minimal, fast, and ready for extension."
+msgid "Send notifications to Discord via webhooks. Custom post types, rich embeds, test messages, and a delivery log."
 msgstr ""
 
 msgid "Settings"
@@ -32,10 +32,13 @@ msgstr ""
 msgid "Notify On"
 msgstr ""
 
-msgid "A new post is published (post type: post)"
+msgid "A tracked item is published"
 msgstr ""
 
-msgid "An existing post is updated (status remains publish)"
+msgid "An existing item is updated (status remains publish)"
+msgstr ""
+
+msgid "Applies to whichever post types are selected above."
 msgstr ""
 
 msgid "Webhook & Identity"
@@ -121,3 +124,120 @@ msgstr ""
 
 msgid "Optional broader role subscribed to all updates."
 msgstr ""
+msgid "Post Types"
+msgstr ""
+
+msgid "Notify These Post Types"
+msgstr ""
+
+msgid "Choose which post types should trigger a Discord notification. Custom post types are supported."
+msgstr ""
+
+msgid "Send Test Message"
+msgstr ""
+
+msgid "Sending…"
+msgstr ""
+
+msgid "Use Rich Embed"
+msgstr ""
+
+msgid "Send a formatted embed (title, description, color, footer) instead of plain text."
+msgstr ""
+
+msgid "When disabled, the plugin falls back to the plain-text format used before version 1.1."
+msgstr ""
+
+msgid "Embed Color"
+msgstr ""
+
+msgid "Accent color shown on the left edge of the embed."
+msgstr ""
+
+msgid "Used as the embed description when Rich Embed is enabled, or as the full message otherwise."
+msgstr ""
+
+msgid "Post author display name"
+msgstr ""
+
+msgid "Comma-separated category names"
+msgstr ""
+
+msgid "Comma-separated tag names"
+msgstr ""
+
+msgid "Post type label"
+msgstr ""
+
+msgid "Published date (site format)"
+msgstr ""
+
+msgid "Delivery Log"
+msgstr ""
+
+msgid "Shows the last %d webhook deliveries (newest first) for troubleshooting."
+msgstr ""
+
+msgid "No deliveries yet."
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Item"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Detail"
+msgstr ""
+
+msgid "Success"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "Clear Log"
+msgstr ""
+
+msgid "Delivery log cleared."
+msgstr ""
+
+msgid "You are not allowed to do this."
+msgstr ""
+
+msgid "Please enter a webhook URL first."
+msgstr ""
+
+msgid "This does not look like a valid Discord webhook URL."
+msgstr ""
+
+msgid "Test message"
+msgstr ""
+
+msgid "Init Pulse For Discord is correctly configured on %s."
+msgstr ""
+
+msgid "✅ Test message from %s — Init Pulse For Discord is configured correctly."
+msgstr ""
+
+msgid "Delivered"
+msgstr ""
+
+msgid "Test message sent! Check your Discord channel."
+msgstr ""
+
+msgid "Discord webhook responded with HTTP %d."
+msgstr ""
+
+msgid "Discord webhook unreachable after retries."
+msgstr ""
+
+msgid "New post"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
