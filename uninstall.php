@@ -5,6 +5,7 @@
  * Permanently remove plugin data from the database:
  * - Plugin options (settings page)
  * - Term meta (Discord Role IDs)
+ * - Post meta (Hot Post Milestones tracking)
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
@@ -30,6 +31,9 @@ $options = array(
     'init_plugin_suite_pulse_for_discord_timeout',
     'init_plugin_suite_pulse_for_discord_retry',
     'init_plugin_suite_pulse_for_discord_log',
+    'init_plugin_suite_pulse_for_discord_notify_milestone',
+    'init_plugin_suite_pulse_for_discord_milestone_thresholds',
+    'init_plugin_suite_pulse_for_discord_message_template_milestone',
 );
 
 foreach ( $options as $option ) {
@@ -49,3 +53,9 @@ $meta_keys = array(
 foreach ( $meta_keys as $key ) {
     delete_metadata( 'term', 0, $key, '', true );
 }
+
+/**
+ * 3. Remove post meta (Hot Post Milestones tracking — which milestones were
+ * already notified per post, from the Init View Count cross-plugin feature)
+ */
+delete_metadata( 'post', 0, '_init_pulse_notified_milestones', '', true );

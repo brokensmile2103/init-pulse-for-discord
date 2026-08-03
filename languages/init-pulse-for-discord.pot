@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Init Discord Hub\n"
@@ -8,7 +9,9 @@ msgstr ""
 msgid "Init Pulse For Discord"
 msgstr ""
 
-msgid "Send notifications to Discord via webhooks. Custom post types, rich embeds, test messages, and a delivery log."
+msgid ""
+"Send notifications to Discord via webhooks. Custom post types, rich embeds, "
+"test messages, delivery log, and hot-post milestone alerts."
 msgstr ""
 
 msgid "Settings"
@@ -23,7 +26,9 @@ msgstr ""
 msgid "Send notifications to Discord when content is published."
 msgstr ""
 
-msgid "This page configures options only. Hook the actual sending into publish/update events."
+msgid ""
+"This page configures options only. Hook the actual sending into "
+"publish/update events."
 msgstr ""
 
 msgid "Events to Notify"
@@ -124,13 +129,16 @@ msgstr ""
 
 msgid "Optional broader role subscribed to all updates."
 msgstr ""
+
 msgid "Post Types"
 msgstr ""
 
 msgid "Notify These Post Types"
 msgstr ""
 
-msgid "Choose which post types should trigger a Discord notification. Custom post types are supported."
+msgid ""
+"Choose which post types should trigger a Discord notification. Custom post "
+"types are supported."
 msgstr ""
 
 msgid "Send Test Message"
@@ -142,10 +150,14 @@ msgstr ""
 msgid "Use Rich Embed"
 msgstr ""
 
-msgid "Send a formatted embed (title, description, color, footer) instead of plain text."
+msgid ""
+"Send a formatted embed (title, description, color, footer) instead of plain "
+"text."
 msgstr ""
 
-msgid "When disabled, the plugin falls back to the plain-text format used before version 1.1."
+msgid ""
+"When disabled, the plugin falls back to the plain-text format used before "
+"version 1.1."
 msgstr ""
 
 msgid "Embed Color"
@@ -154,7 +166,9 @@ msgstr ""
 msgid "Accent color shown on the left edge of the embed."
 msgstr ""
 
-msgid "Used as the embed description when Rich Embed is enabled, or as the full message otherwise."
+msgid ""
+"Used as the embed description when Rich Embed is enabled, or as the full "
+"message otherwise."
 msgstr ""
 
 msgid "Post author display name"
@@ -175,7 +189,8 @@ msgstr ""
 msgid "Delivery Log"
 msgstr ""
 
-msgid "Shows the last %d webhook deliveries (newest first) for troubleshooting."
+msgid ""
+"Shows the last %d webhook deliveries (newest first) for troubleshooting."
 msgstr ""
 
 msgid "No deliveries yet."
@@ -220,7 +235,8 @@ msgstr ""
 msgid "Init Pulse For Discord is correctly configured on %s."
 msgstr ""
 
-msgid "✅ Test message from %s — Init Pulse For Discord is configured correctly."
+msgid ""
+"✅ Test message from %s — Init Pulse For Discord is configured correctly."
 msgstr ""
 
 msgid "Delivered"
@@ -241,3 +257,53 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
+msgid "Hot Post Milestones"
+msgstr ""
+
+msgid "This feature requires the %s plugin to be active on this site."
+msgstr ""
+
+msgid ""
+"You can still configure the fields below now — they will start working "
+"automatically as soon as Init View Count is installed and activated, no need"
+" to re-save."
+msgstr ""
+
+msgid "Notify on View Milestones"
+msgstr ""
+
+msgid ""
+"Send a Discord notification when a tracked post's total view count (from "
+"Init View Count) crosses one of the milestones below."
+msgstr ""
+
+msgid ""
+"Uses the same post types selected in \"Post Types\" above. Each milestone is"
+" only ever sent once per post."
+msgstr ""
+
+msgid "View Milestones"
+msgstr ""
+
+msgid ""
+"Comma-separated view counts. A notification fires once when total views "
+"reach or pass each one, in ascending order."
+msgstr ""
+
+msgid "Milestone Message Template"
+msgstr ""
+
+msgid "Uses the same placeholders as the post template above, plus:"
+msgstr ""
+
+msgid "Current total views, formatted (e.g. 12,345)"
+msgstr ""
+
+msgid "Current total views, abbreviated (e.g. 12.3K)"
+msgstr ""
+
+msgid "The milestone that was just crossed"
+msgstr ""
+
+msgid "Milestone (%2$s views): %1$s"
+msgstr ""

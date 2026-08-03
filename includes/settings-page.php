@@ -232,6 +232,11 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
     $timeout      = absint( get_option( 'init_plugin_suite_pulse_for_discord_timeout', 8 ) );
     $retry        = absint( get_option( 'init_plugin_suite_pulse_for_discord_retry', 1 ) );
 
+    $view_count_active   = init_plugin_suite_pulse_for_discord_view_count_active();
+    $notify_milestone    = get_option( 'init_plugin_suite_pulse_for_discord_notify_milestone', '0' );
+    $milestone_thresholds = get_option( 'init_plugin_suite_pulse_for_discord_milestone_thresholds', '1000, 5000, 10000, 50000, 100000' );
+    $template_milestone   = get_option( 'init_plugin_suite_pulse_for_discord_message_template_milestone', "🔥 {title_url}\n**{views_short}** views and counting — {site_name}" );
+
     $selectable_post_types = init_plugin_suite_pulse_for_discord_get_selectable_post_types();
 
     // Read-only display flag only; the actual Clear Log action is nonce-verified
@@ -308,6 +313,78 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
                         </label>
                         <p class="description">
                             <?php esc_html_e( 'Applies to whichever post types are selected above.', 'init-pulse-for-discord' ); ?>
+                        </p>
+                    </td>
+                </tr>
+
+                <tr class="idh-dependent"><th colspan="2"><h2><?php esc_html_e( 'Hot Post Milestones', 'init-pulse-for-discord' ); ?></h2></th></tr>
+
+                <?php if ( ! $view_count_active ) : ?>
+                    <tr class="idh-dependent">
+                        <th colspan="2">
+                            <div class="notice notice-warning inline" style="margin:0 0 12px;">
+                                <p>
+                                    <?php
+                                    $init_pulse_vc_notice = sprintf(
+                                        /* translators: %s: link to the Init View Count plugin page. */
+                                        __( 'This feature requires the %s plugin to be active on this site.', 'init-pulse-for-discord' ),
+                                        '<a href="https://wordpress.org/plugins/init-view-count/" target="_blank" rel="noopener noreferrer">Init View Count</a>'
+                                    );
+                                    echo wp_kses(
+                                        $init_pulse_vc_notice,
+                                        array( 'a' => array( 'href' => true, 'target' => true, 'rel' => true ) )
+                                    );
+                                    ?>
+                                    <?php esc_html_e( 'You can still configure the fields below now — they will start working automatically as soon as Init View Count is installed and activated, no need to re-save.', 'init-pulse-for-discord' ); ?>
+                                </p>
+                            </div>
+                        </th>
+                    </tr>
+                <?php endif; ?>
+
+                <tr class="idh-dependent">
+                    <th scope="row"><label for="init_plugin_suite_pulse_for_discord_notify_milestone"><?php esc_html_e( 'Notify on View Milestones', 'init-pulse-for-discord' ); ?></label></th>
+                    <td>
+                        <label>
+                            <input type="checkbox"
+                                   name="init_plugin_suite_pulse_for_discord_notify_milestone"
+                                   id="init_plugin_suite_pulse_for_discord_notify_milestone"
+                                   value="1" <?php checked( $notify_milestone, '1' ); ?>>
+                            <?php esc_html_e( 'Send a Discord notification when a tracked post\'s total view count (from Init View Count) crosses one of the milestones below.', 'init-pulse-for-discord' ); ?>
+                        </label>
+                        <p class="description">
+                            <?php esc_html_e( 'Uses the same post types selected in "Post Types" above. Each milestone is only ever sent once per post.', 'init-pulse-for-discord' ); ?>
+                        </p>
+                    </td>
+                </tr>
+
+                <tr class="idh-dependent">
+                    <th scope="row"><label for="init_plugin_suite_pulse_for_discord_milestone_thresholds"><?php esc_html_e( 'View Milestones', 'init-pulse-for-discord' ); ?></label></th>
+                    <td>
+                        <input type="text" class="regular-text ltr"
+                               name="init_plugin_suite_pulse_for_discord_milestone_thresholds"
+                               id="init_plugin_suite_pulse_for_discord_milestone_thresholds"
+                               value="<?php echo esc_attr( $milestone_thresholds ); ?>"
+                               placeholder="1000, 5000, 10000, 50000, 100000" />
+                        <p class="description">
+                            <?php esc_html_e( 'Comma-separated view counts. A notification fires once when total views reach or pass each one, in ascending order.', 'init-pulse-for-discord' ); ?>
+                        </p>
+                    </td>
+                </tr>
+
+                <tr class="idh-dependent">
+                    <th scope="row"><label for="init_plugin_suite_pulse_for_discord_message_template_milestone"><?php esc_html_e( 'Milestone Message Template', 'init-pulse-for-discord' ); ?></label></th>
+                    <td>
+                        <textarea name="init_plugin_suite_pulse_for_discord_message_template_milestone"
+                                  id="init_plugin_suite_pulse_for_discord_message_template_milestone"
+                                  class="large-text code" rows="5"><?php
+                            echo esc_textarea( $template_milestone );
+                        ?></textarea>
+                        <p class="description">
+                            <?php esc_html_e( 'Uses the same placeholders as the post template above, plus:', 'init-pulse-for-discord' ); ?><br>
+                            <code>{views}</code> – <?php esc_html_e( 'Current total views, formatted (e.g. 12,345)', 'init-pulse-for-discord' ); ?><br>
+                            <code>{views_short}</code> – <?php esc_html_e( 'Current total views, abbreviated (e.g. 12.3K)', 'init-pulse-for-discord' ); ?><br>
+                            <code>{milestone}</code> – <?php esc_html_e( 'The milestone that was just crossed', 'init-pulse-for-discord' ); ?>
                         </p>
                     </td>
                 </tr>

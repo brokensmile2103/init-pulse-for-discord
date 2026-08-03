@@ -4,7 +4,7 @@ Tags: discord, webhook, notifications, publish, automation
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,6 +64,7 @@ Key design goals:
 - Retry logic & timeout controls
 - No action removals — plays well with all other plugins
 - Compact, modern codebase
+- **Hot Post Milestones** *(optional, requires [Init View Count](https://wordpress.org/plugins/init-view-count/))* — automatically notify Discord when a post's total view count crosses a configured threshold (e.g. 1,000 / 10,000 / 100,000 views), with its own message template and `{views}`, `{views_short}`, `{milestone}` placeholders. Each milestone is sent once per post. Gracefully inactive (with a link to install it) when Init View Count isn't active — no errors, no broken settings.
 
 == Usage ==
 
@@ -84,6 +85,9 @@ Available fields:
 | Embed Color | Accent color for the embed sidebar |
 | Timeout / Retries | Reliability controls |
 | Message Template | Markdown-ready content, used as the embed description or full message |
+| Notify on View Milestones | Enable Discord alerts when a post's view count crosses a threshold (requires Init View Count) |
+| View Milestones | Comma-separated view counts (e.g. `1000, 5000, 10000`) |
+| Milestone Message Template | Separate template for milestone alerts, with `{views}`, `{views_short}`, `{milestone}` placeholders |
 
 The settings screen also shows a **Delivery Log** with the outcome of your most recent notifications.
 
@@ -102,9 +106,13 @@ Example mention result:
 Modify the final webhook payload before sending.  
 Params: `array $payload`, `int $post_id`, `string $context`
 
+`init_plugin_suite_pulse_for_discord_milestone_payload`  
+Modify the webhook payload for a milestone notification before sending.  
+Params: `array $payload`, `int $post_id`, `int $views`, `int $milestone`
+
 Example:
 
-add_filter('init_plugin_suite_pulse_for_discord_payload', function($payload){
+add_filter('init_plugin_suite_pulse_for_discord_payload', function($payload) {
     $payload['content'] .= "\nCustom footer";
     return $payload;
 });
@@ -118,8 +126,9 @@ add_filter('init_plugin_suite_pulse_for_discord_payload', function($payload){
 
 == Screenshots ==
 
-1. Settings page with webhook + template fields  
-2. Category/Tag edit screen with Role ID inputs  
+1. Settings page with webhook + template fields
+2. Delivery Log with recent webhook delivery history
+3. Category/Tag edit screen with Role ID inputs
 
 == Frequently Asked Questions ==
 
@@ -142,7 +151,19 @@ Yes — simply leave the Role ID fields empty.
 No. **It never removes actions or filters.**  
 Everything is additive and safe-by-default.
 
+= What is "Hot Post Milestones" and do I need another plugin for it? =  
+It's an optional feature that sends a Discord alert when a post's total view count crosses a threshold you configure (e.g. 1,000 views). It requires the free [Init View Count](https://wordpress.org/plugins/init-view-count/) plugin to be active, since that's what actually counts the views. If Init View Count isn't installed, the setting is simply inactive (with a link to get it) — nothing breaks, and no other feature of Init Pulse For Discord is affected.
+
+= I installed Init View Count after configuring milestones — do I need to re-save settings? =  
+No. The connection is checked automatically on every page load, so milestone notifications start working as soon as Init View Count is active — no re-save needed.
+
 == Changelog ==
+
+= 1.2 – August 4, 2026 =
+- Added: **Hot Post Milestones** — optional cross-plugin integration with Init View Count. Sends a Discord notification (with its own message template) when a tracked post's total view count crosses a configured threshold. Each milestone fires once per post.
+  - Soft dependency only: detected via `defined('INIT_PLUGIN_SUITE_VIEW_COUNT_VERSION')` on `plugins_loaded` (priority 20), so plugin load order never matters and nothing errors if Init View Count is inactive or later deactivated.
+  - When Init View Count isn't active, the settings screen shows a notice with a link to it; fields remain configurable and take effect automatically once the plugin is installed.
+- Added: `init_plugin_suite_pulse_for_discord_milestone_payload` filter for developers to customize the milestone webhook payload.
 
 = 1.1 – July 14, 2026 =
 - Added: Custom Post Type support — select which post types trigger notifications
