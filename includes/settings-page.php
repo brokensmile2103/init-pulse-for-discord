@@ -55,7 +55,7 @@ add_action( 'admin_init', function () {
 
     $group = INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_OPTION;
 
-    $sanitize_bool = fn( $v ) => isset( $v ) ? '1' : '0';
+    $sanitize_bool = fn( $v ) => ( isset( $v ) && $v === '1' ) ? '1' : '0';
 
     register_setting( $group, 'init_plugin_suite_pulse_for_discord_enable', [
         'sanitize_callback' => $sanitize_bool,

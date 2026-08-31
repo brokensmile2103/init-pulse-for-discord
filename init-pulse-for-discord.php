@@ -3,13 +3,13 @@
  * Plugin Name: Init Pulse For Discord
  * Plugin URI: https://inithtml.com/plugin/init-pulse-for-discord/
  * Description: Send notifications to Discord via webhooks. Custom post types, rich embeds, test messages, delivery log, and hot-post milestone alerts.
- * Version: 1.2
+ * Version: 1.3
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-pulse-for-discord
  * Domain Path: /languages
  * Requires at least: 5.5
- * Tested up to: 7.0
+ * Tested up to: 7.1
  * Requires PHP: 7.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +18,7 @@
 defined('ABSPATH') || exit;
 
 // ===== CONSTANTS ===== //
-define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_VERSION',      '1.2' );
+define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_VERSION',      '1.3' );
 define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_SLUG',         'init-pulse-for-discord' );
 define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_OPTION',       'init_plugin_suite_pulse_for_discord_settings' );
 

@@ -2,9 +2,9 @@
 Contributors: brokensmile.2103
 Tags: discord, webhook, notifications, publish, automation
 Requires at least: 5.5
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,9 @@ It's an optional feature that sends a Discord alert when a post's total view cou
 No. The connection is checked automatically on every page load, so milestone notifications start working as soon as Init View Count is active — no re-save needed.
 
 == Changelog ==
+
+= 1.3 – September 1, 2026 =
+* Fixed: The shared checkbox sanitizer treated any present value as enabled, causing every unchecked checkbox to be saved as `1` on the first save. Tightened to require an explicit `'1'` before treating a checkbox as on.
 
 = 1.2 – August 4, 2026 =
 - Added: **Hot Post Milestones** — optional cross-plugin integration with Init View Count. Sends a Discord notification (with its own message template) when a tracked post's total view count crosses a configured threshold. Each milestone fires once per post.
