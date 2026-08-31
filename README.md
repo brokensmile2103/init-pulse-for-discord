@@ -4,7 +4,7 @@
 
 **Automatic alerts. Role mentions. Hot-post milestones. Zero bloat.**
 
-[![Version](https://img.shields.io/badge/stable-v1.2-blue.svg)](https://wordpress.org/plugins/init-pulse-for-discord/)
+[![Version](https://img.shields.io/badge/stable-v1.3-blue.svg)](https://wordpress.org/plugins/init-pulse-for-discord/)
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 ![Made with ❤️ in HCMC](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20in%20HCMC-blue)
 
