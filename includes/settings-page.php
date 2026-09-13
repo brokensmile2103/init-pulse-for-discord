@@ -392,6 +392,22 @@ function init_plugin_suite_pulse_for_discord_render_settings_page() {
                 <tr class="idh-dependent"><th colspan="2"><h2><?php esc_html_e( 'Webhook & Identity', 'init-pulse-for-discord' ); ?></h2></th></tr>
 
                 <tr class="idh-dependent">
+                    <th colspan="2">
+                        <p class="description">
+                            <?php
+                            $init_pulse_term_webhook_notice = sprintf(
+                                /* translators: 1: Categories admin screen link text, 2: Tags admin screen link text. */
+                                __( 'Tip: you can also set a dedicated Discord Webhook (with its own Username/Avatar, and an option to skip this global webhook) per %1$s or %2$s.', 'init-pulse-for-discord' ),
+                                '<a href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=category' ) ) . '">' . esc_html__( 'Category', 'init-pulse-for-discord' ) . '</a>',
+                                '<a href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=post_tag' ) ) . '">' . esc_html__( 'Tag', 'init-pulse-for-discord' ) . '</a>'
+                            );
+                            echo wp_kses( $init_pulse_term_webhook_notice, array( 'a' => array( 'href' => true ) ) );
+                            ?>
+                        </p>
+                    </th>
+                </tr>
+
+                <tr class="idh-dependent">
                     <th scope="row"><label for="init_plugin_suite_pulse_for_discord_webhook_url"><?php esc_html_e( 'Discord Webhook URL', 'init-pulse-for-discord' ); ?></label></th>
                     <td>
                         <input type="url" class="regular-text ltr"

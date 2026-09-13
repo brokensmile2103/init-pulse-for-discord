@@ -4,7 +4,7 @@ Tags: discord, webhook, notifications, publish, automation
 Requires at least: 5.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.3
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ Perfect for:
 Straightforward configuration:
 
 - Paste your webhook URL  
-- (Optional) Configure Discord role IDs inside **Categories** or **Tags**  
+- (Optional) Configure Discord role IDs — or a dedicated per-term webhook — inside **Categories** or **Tags**  
 - Done — your server receives updates instantly  
 
 Clean, minimal, and built for performance — no bloat, no external SDKs.
@@ -46,6 +46,7 @@ Key design goals:
 - **Custom Post Type support** — choose exactly which post types (posts, pages, products, or any custom type) should trigger a notification
 - Role tagging based on Categories & Tags  
   → When a post is in that taxonomy, that role is mentioned
+- **Per-Category/Tag Webhook routing** — optionally send a term's posts to their own dedicated Discord webhook (own Username/Avatar), with a per-term "Only send to this webhook" switch to skip the global webhook entirely
 - **Rich Discord embeds** — title, description, accent color, footer, and timestamp (with a plain-text fallback mode)
 - **Send Test Message** button on the settings screen — verify your webhook without publishing a post
 - **Delivery Log** — a rolling snapshot of the most recent deliveries (success/error) for troubleshooting, stored lightly in `wp_options` with `autoload = no`
@@ -142,7 +143,10 @@ Yes — use the **Send Test Message** button next to the Webhook URL field. It s
 The **Delivery Log** section at the bottom of the settings screen shows the most recent deliveries with their status and error detail, if any.
 
 = Can I send different messages for different categories? =  
-Indirectly: assign different role IDs to categories/tags to tailor mentions.
+The message template itself is shared, but you can tailor mentions by assigning different role IDs to categories/tags, and route posts in a given category/tag to a completely different Discord channel — see the next question.
+
+= Can I send one category to a different Discord channel? =  
+Yes. Open that **Category** or **Tag** and fill in its own "Discord Webhook URL" (with an optional Username/Avatar override). By default posts in that term are sent there *in addition to* the global webhook; enable "Only send to this webhook" on the term if you want them to skip the global webhook entirely. A post that belongs to several terms with their own webhooks notifies every one of them.
 
 = Can I use the webhook without role mentions? =  
 Yes — simply leave the Role ID fields empty.
@@ -158,6 +162,14 @@ It's an optional feature that sends a Discord alert when a post's total view cou
 No. The connection is checked automatically on every page load, so milestone notifications start working as soon as Init View Count is active — no re-save needed.
 
 == Changelog ==
+
+= 1.4 – September 13, 2026 =
+* Added: **Per-Category/Tag Webhook** — set a dedicated Discord Webhook URL (with its own Username/Avatar override) directly on any Category or Tag edit screen.
+* Added: **"Only send to this webhook"** per-term switch — when enabled, posts in that term skip the global webhook and are sent only to the term's own webhook.
+* Changed: A post belonging to several categories/tags with their own webhooks now notifies each one (deduplicated by webhook URL), in addition to the global webhook unless a matching term opts out of it.
+* Changed: Hot Post Milestone notifications now respect the same per-term webhook routing as publish/update notifications.
+* Changed: The Delivery Log now records a separate entry per destination webhook when a post routes to more than one, making multi-webhook setups easier to troubleshoot.
+* No breaking changes — sites that don't configure any per-term webhook keep sending to the global webhook exactly as before.
 
 = 1.3 – September 1, 2026 =
 * Fixed: The shared checkbox sanitizer treated any present value as enabled, causing every unchecked checkbox to be saved as `1` on the first save. Tightened to require an explicit `'1'` before treating a checkbox as on.

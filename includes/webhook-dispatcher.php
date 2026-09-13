@@ -8,6 +8,24 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
+ * Term meta keys used by the per-term webhook override feature (see
+ * includes/taxonomy-discord-roles.php for the admin UI that manages them).
+ * Defined here since this file loads first; both files share these keys.
+ */
+if ( ! defined( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_WEBHOOK_META' ) ) {
+    define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_WEBHOOK_META', 'init_plugin_suite_pulse_for_discord_term_webhook_url' );
+}
+if ( ! defined( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_USERNAME_META' ) ) {
+    define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_USERNAME_META', 'init_plugin_suite_pulse_for_discord_term_username' );
+}
+if ( ! defined( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_AVATAR_META' ) ) {
+    define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_AVATAR_META', 'init_plugin_suite_pulse_for_discord_term_avatar' );
+}
+if ( ! defined( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_EXCLUSIVE_META' ) ) {
+    define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_EXCLUSIVE_META', 'init_plugin_suite_pulse_for_discord_term_webhook_exclusive' );
+}
+
+/**
  * Helpers
  */
 
@@ -64,6 +82,71 @@ function init_plugin_suite_pulse_for_discord_collect_roles_for_post( $post_id ) 
     return ! empty( $roles ) ? $roles : $roles_all;
 }
 
+/**
+ * Collect the Discord webhook destination(s) for a post, based on the
+ * per-term overrides configured on its categories/tags (see
+ * includes/taxonomy-discord-roles.php) plus the global webhook.
+ *
+ * Rules:
+ * - Every category/tag with its own webhook URL configured is a distinct
+ *   destination (deduplicated by webhook URL — the first matching term
+ *   wins the identity if the same URL is set on more than one term).
+ * - A term's own Username/Avatar are used when set; otherwise the global
+ *   ones are used as fallback.
+ * - If ANY matching term has "Only send to this webhook" enabled, the
+ *   global webhook is skipped entirely for this post.
+ * - When no term overrides apply (or none are exclusive), the global
+ *   webhook is still included as a destination — this keeps existing
+ *   sites working exactly as before, unchanged.
+ *
+ * @param int   $post_id Post ID to resolve destinations for.
+ * @param array $opts Global options, must contain 'webhook', 'username', 'avatar'.
+ * @return array[] List of destinations: array{webhook:string, username:string, avatar:string, label:string}
+ */
+function init_plugin_suite_pulse_for_discord_collect_webhook_targets( $post_id, $opts ) {
+    $targets     = array(); // Keyed by webhook URL to dedupe.
+    $skip_global = false;
+
+    foreach ( array( 'category', 'post_tag' ) as $tax ) {
+        $terms = get_the_terms( $post_id, $tax );
+        if ( empty( $terms ) || is_wp_error( $terms ) ) continue;
+
+        foreach ( $terms as $term ) {
+            $webhook = trim( (string) get_term_meta( $term->term_id, INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_WEBHOOK_META, true ) );
+            if ( '' === $webhook ) continue;
+
+            $exclusive = get_term_meta( $term->term_id, INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_EXCLUSIVE_META, true ) === '1';
+            if ( $exclusive ) {
+                $skip_global = true;
+            }
+
+            if ( isset( $targets[ $webhook ] ) ) continue; // Already added by another term.
+
+            $username = trim( (string) get_term_meta( $term->term_id, INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_USERNAME_META, true ) );
+            $avatar   = trim( (string) get_term_meta( $term->term_id, INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_AVATAR_META, true ) );
+
+            $targets[ $webhook ] = array(
+                'webhook'  => $webhook,
+                'username' => '' !== $username ? $username : $opts['username'],
+                'avatar'   => '' !== $avatar ? $avatar : $opts['avatar'],
+                /* translators: %s: category or tag name. */
+                'label'    => sprintf( __( 'Term: %s', 'init-pulse-for-discord' ), $term->name ),
+            );
+        }
+    }
+
+    if ( ! $skip_global && ! empty( $opts['webhook'] ) && ! isset( $targets[ $opts['webhook'] ] ) ) {
+        $targets[ $opts['webhook'] ] = array(
+            'webhook'  => $opts['webhook'],
+            'username' => $opts['username'],
+            'avatar'   => $opts['avatar'],
+            'label'    => '',
+        );
+    }
+
+    return array_values( $targets );
+}
+
 // Build a comma-separated term name list for a post/taxonomy (empty string if none).
 function init_plugin_suite_pulse_for_discord_get_term_names( $post_id, $taxonomy ) {
     $terms = get_the_terms( $post_id, $taxonomy );
@@ -117,7 +200,11 @@ function init_plugin_suite_pulse_for_discord_build_payload( $post_id, $context =
         'embed_color'    => (string) get_option( 'init_plugin_suite_pulse_for_discord_embed_color', '#5865F2' ),
     );
 
-    if ( ! $opts['enable'] || empty( $opts['webhook'] ) ) return false;
+    // Note: the global webhook is intentionally NOT required here — a post
+    // may be routed entirely through per-term webhooks (see
+    // init_plugin_suite_pulse_for_discord_collect_webhook_targets()). Whether
+    // there is anything at all to send to is resolved later, at dispatch time.
+    if ( ! $opts['enable'] ) return false;
 
     // Rendered template text (used as embed description in rich mode, or as content in legacy mode).
     $rendered = init_plugin_suite_pulse_for_discord_render_template( $opts['tpl_post'], $post );
@@ -136,9 +223,11 @@ function init_plugin_suite_pulse_for_discord_build_payload( $post_id, $context =
         $image_url = (string) get_the_post_thumbnail_url( $post, $opts['image_size'] ? $opts['image_size'] : 'full' );
     }
 
-    $payload = array(
-        'username' => $opts['username'],
-    );
+    // Identity (username/avatar) is intentionally left out of the base
+    // payload: it is filled in per-destination at dispatch time, since each
+    // per-term webhook target may use its own override (see
+    // init_plugin_suite_pulse_for_discord_collect_webhook_targets()).
+    $payload = array();
 
     if ( $opts['rich_embed'] ) {
         $embed = array(
@@ -170,10 +259,6 @@ function init_plugin_suite_pulse_for_discord_build_payload( $post_id, $context =
                 ),
             );
         }
-    }
-
-    if ( ! empty( $opts['avatar'] ) ) {
-        $payload['avatar_url'] = esc_url_raw( $opts['avatar'] );
     }
 
     // Allow theme/plugins to tweak payload safely
@@ -223,26 +308,38 @@ function init_plugin_suite_pulse_for_discord_send_webhook( $webhook_url, $payloa
     return new WP_Error( 'discord_unreachable', __( 'Discord webhook unreachable after retries.', 'init-pulse-for-discord' ) );
 }
 
-// Send the payload and record the outcome in the delivery log.
+// Send the payload to every resolved destination (global and/or per-term
+// webhooks) and record each outcome as its own delivery log entry.
 function init_plugin_suite_pulse_for_discord_dispatch_and_log( $post, $context, $payload, $opts ) {
-    $result = init_plugin_suite_pulse_for_discord_send_webhook( $opts['webhook'], $payload, $opts['timeout'], $opts['retry'] );
+    $targets = init_plugin_suite_pulse_for_discord_collect_webhook_targets( $post->ID, $opts );
+    if ( empty( $targets ) ) return; // Nothing configured to send to.
 
     $context_labels = array(
         'publish' => __( 'New post', 'init-pulse-for-discord' ),
         'update'  => __( 'Update', 'init-pulse-for-discord' ),
     );
 
-    init_plugin_suite_pulse_for_discord_add_log_entry( array(
-        'context' => $context,
-        'post_id' => $post->ID,
-        'title'   => isset( $context_labels[ $context ] )
-            ? sprintf( '%s: %s', $context_labels[ $context ], get_the_title( $post ) )
-            : get_the_title( $post ),
-        'status'  => is_wp_error( $result ) ? 'error' : 'success',
-        'message' => is_wp_error( $result ) ? $result->get_error_message() : __( 'Delivered', 'init-pulse-for-discord' ),
-    ) );
+    $base_title = isset( $context_labels[ $context ] )
+        ? sprintf( '%s: %s', $context_labels[ $context ], get_the_title( $post ) )
+        : get_the_title( $post );
 
-    return $result;
+    foreach ( $targets as $target ) {
+        $final_payload              = $payload;
+        $final_payload['username']  = $target['username'];
+        if ( ! empty( $target['avatar'] ) ) {
+            $final_payload['avatar_url'] = esc_url_raw( $target['avatar'] );
+        }
+
+        $result = init_plugin_suite_pulse_for_discord_send_webhook( $target['webhook'], $final_payload, $opts['timeout'], $opts['retry'] );
+
+        init_plugin_suite_pulse_for_discord_add_log_entry( array(
+            'context' => $context,
+            'post_id' => $post->ID,
+            'title'   => $target['label'] ? sprintf( '%s [%s]', $base_title, $target['label'] ) : $base_title,
+            'status'  => is_wp_error( $result ) ? 'error' : 'success',
+            'message' => is_wp_error( $result ) ? $result->get_error_message() : __( 'Delivered', 'init-pulse-for-discord' ),
+        ) );
+    }
 }
 
 /**

@@ -115,7 +115,9 @@ function init_plugin_suite_pulse_for_discord_build_milestone_payload( $post, $vi
         'embed_color'   => (string) get_option( 'init_plugin_suite_pulse_for_discord_embed_color', '#5865F2' ),
     );
 
-    if ( empty( $opts['webhook'] ) ) return false;
+    // Note: the global webhook is intentionally NOT required here — the post
+    // may be routed entirely through per-term webhooks, resolved later by
+    // init_plugin_suite_pulse_for_discord_collect_webhook_targets().
 
     // Base placeholders shared with the publish/update template, plus 3 milestone-only ones.
     // Reuses Init View Count's own short-number formatter (e.g. "12.3 K") when available,
@@ -140,7 +142,9 @@ function init_plugin_suite_pulse_for_discord_build_milestone_payload( $post, $vi
         $image_url = (string) get_the_post_thumbnail_url( $post, $opts['image_size'] ? $opts['image_size'] : 'full' );
     }
 
-    $payload = array( 'username' => $opts['username'] );
+    // Identity (username/avatar) is filled in per-destination at dispatch
+    // time, same as the publish/update payload in webhook-dispatcher.php.
+    $payload = array();
 
     if ( $opts['rich_embed'] ) {
         $embed = array(
@@ -170,10 +174,6 @@ function init_plugin_suite_pulse_for_discord_build_milestone_payload( $post, $vi
                 ),
             );
         }
-    }
-
-    if ( ! empty( $opts['avatar'] ) ) {
-        $payload['avatar_url'] = esc_url_raw( $opts['avatar'] );
     }
 
     // Allow theme/plugins to tweak the milestone payload safely (mirrors the
@@ -238,20 +238,34 @@ function init_plugin_suite_pulse_for_discord_on_view_counted( $post_id, $updated
     if ( ! $built ) return;
 
     list( $payload, $opts ) = $built;
-    $result = init_plugin_suite_pulse_for_discord_send_webhook( $opts['webhook'], $payload, $opts['timeout'], $opts['retry'] );
 
-    init_plugin_suite_pulse_for_discord_add_log_entry( array(
-        'context' => 'milestone',
-        'post_id' => $post_id,
-        'title'   => sprintf(
-            /* translators: 1: post title, 2: milestone view count (formatted). */
-            __( 'Milestone (%2$s views): %1$s', 'init-pulse-for-discord' ),
-            get_the_title( $post ),
-            number_format_i18n( $target_milestone )
-        ),
-        'status'  => is_wp_error( $result ) ? 'error' : 'success',
-        'message' => is_wp_error( $result ) ? $result->get_error_message() : __( 'Delivered', 'init-pulse-for-discord' ),
-    ) );
+    $targets = init_plugin_suite_pulse_for_discord_collect_webhook_targets( $post_id, $opts );
+    if ( empty( $targets ) ) return; // Nothing configured to send to.
+
+    $base_title = sprintf(
+        /* translators: 1: post title, 2: milestone view count (formatted). */
+        __( 'Milestone (%2$s views): %1$s', 'init-pulse-for-discord' ),
+        get_the_title( $post ),
+        number_format_i18n( $target_milestone )
+    );
+
+    foreach ( $targets as $target ) {
+        $final_payload             = $payload;
+        $final_payload['username'] = $target['username'];
+        if ( ! empty( $target['avatar'] ) ) {
+            $final_payload['avatar_url'] = esc_url_raw( $target['avatar'] );
+        }
+
+        $result = init_plugin_suite_pulse_for_discord_send_webhook( $target['webhook'], $final_payload, $opts['timeout'], $opts['retry'] );
+
+        init_plugin_suite_pulse_for_discord_add_log_entry( array(
+            'context' => 'milestone',
+            'post_id' => $post_id,
+            'title'   => $target['label'] ? sprintf( '%s [%s]', $base_title, $target['label'] ) : $base_title,
+            'status'  => is_wp_error( $result ) ? 'error' : 'success',
+            'message' => is_wp_error( $result ) ? $result->get_error_message() : __( 'Delivered', 'init-pulse-for-discord' ),
+        ) );
+    }
 }
 
 /**
