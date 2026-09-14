@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Init Pulse For Discord
  * Plugin URI: https://inithtml.com/plugin/init-pulse-for-discord/
- * Description: Send notifications to Discord via webhooks. Custom post types, rich embeds, per-category/tag webhooks, test messages, delivery log, and hot-post milestone alerts.
- * Version: 1.4
+ * Description: Send notifications to Discord via webhooks. Custom post types, rich embeds, per-category/tag webhooks, per-post opt-out, test messages, delivery log, and hot-post milestone alerts.
+ * Version: 1.5
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-pulse-for-discord
@@ -18,7 +18,7 @@
 defined('ABSPATH') || exit;
 
 // ===== CONSTANTS ===== //
-define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_VERSION',      '1.4' );
+define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_VERSION',      '1.5' );
 define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_SLUG',         'init-pulse-for-discord' );
 define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_OPTION',       'init_plugin_suite_pulse_for_discord_settings' );
 
@@ -29,6 +29,7 @@ define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_INCLUDES_PATH', INIT_PLUGIN_SUITE_P
 // ===== INCLUDE ===== //
 require_once INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_INCLUDES_PATH . 'delivery-log.php';
 require_once INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_INCLUDES_PATH . 'webhook-dispatcher.php';
+require_once INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_INCLUDES_PATH . 'skip-notification.php';
 require_once INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_INCLUDES_PATH . 'milestone-notify.php';
 require_once INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_INCLUDES_PATH . 'settings-page.php';
 require_once INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_INCLUDES_PATH . 'taxonomy-discord-roles.php';

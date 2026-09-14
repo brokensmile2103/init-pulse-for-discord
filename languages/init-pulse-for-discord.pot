@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Init Pulse For Discord 1.4\n"
+"Project-Id-Version: Init Pulse For Discord 1.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/init-pulse-for-discord\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-13T16:20:32+00:00\n"
+"POT-Creation-Date: 2026-09-13T16:56:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: init-pulse-for-discord\n"
@@ -28,7 +28,7 @@ msgstr ""
 
 #. Description of the plugin
 #: init-pulse-for-discord.php
-msgid "Send notifications to Discord via webhooks. Custom post types, rich embeds, per-category/tag webhooks, test messages, delivery log, and hot-post milestone alerts."
+msgid "Send notifications to Discord via webhooks. Custom post types, rich embeds, per-category/tag webhooks, per-post opt-out, test messages, delivery log, and hot-post milestone alerts."
 msgstr ""
 
 #. Author of the plugin
@@ -72,8 +72,8 @@ msgid "✅ Test message from %s — Init Pulse For Discord is configured correct
 msgstr ""
 
 #: includes/ajax-test.php:81
-#: includes/milestone-notify.php:266
-#: includes/webhook-dispatcher.php:340
+#: includes/milestone-notify.php:272
+#: includes/webhook-dispatcher.php:360
 msgid "Delivered"
 msgstr ""
 
@@ -82,7 +82,7 @@ msgid "Test message sent! Check your Discord channel."
 msgstr ""
 
 #. translators: 1: post title, 2: milestone view count (formatted).
-#: includes/milestone-notify.php:247
+#: includes/milestone-notify.php:253
 #, php-format
 msgid "Milestone (%2$s views): %1$s"
 msgstr ""
@@ -394,6 +394,22 @@ msgstr ""
 msgid "Clear Log"
 msgstr ""
 
+#: includes/skip-notification.php:45
+msgid "Discord Notification"
+msgstr ""
+
+#: includes/skip-notification.php:68
+msgid "Do not send this post to Discord"
+msgstr ""
+
+#: includes/skip-notification.php:73
+msgid "Skips the update notification (and any future view-milestone alerts) for this post."
+msgstr ""
+
+#: includes/skip-notification.php:75
+msgid "Skips the publish notification (and any future update or view-milestone alerts) for this post."
+msgstr ""
+
 #: includes/taxonomy-discord-roles.php:31
 #: includes/taxonomy-discord-roles.php:109
 msgid "Discord Role ID"
@@ -469,29 +485,29 @@ msgid "Skip the global webhook for posts in this term."
 msgstr ""
 
 #. translators: %s: category or tag name.
-#: includes/webhook-dispatcher.php:133
+#: includes/webhook-dispatcher.php:148
 #, php-format
 msgid "Term: %s"
 msgstr ""
 
 #. translators: %d: HTTP status code returned by Discord.
-#: includes/webhook-dispatcher.php:303
+#: includes/webhook-dispatcher.php:323
 #, php-format
 msgid "Discord webhook responded with HTTP %d."
 msgstr ""
 
-#: includes/webhook-dispatcher.php:308
+#: includes/webhook-dispatcher.php:328
 msgid "Discord webhook unreachable after retries."
 msgstr ""
 
-#: includes/webhook-dispatcher.php:318
+#: includes/webhook-dispatcher.php:338
 msgid "New post"
 msgstr ""
 
-#: includes/webhook-dispatcher.php:319
+#: includes/webhook-dispatcher.php:339
 msgid "Update"
 msgstr ""
 
-#: init-pulse-for-discord.php:48
+#: init-pulse-for-discord.php:49
 msgid "Settings"
 msgstr ""

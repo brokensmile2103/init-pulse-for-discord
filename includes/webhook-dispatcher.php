@@ -26,6 +26,14 @@ if ( ! defined( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_TERM_EXCLUSIVE_META' ) ) {
 }
 
 /**
+ * Post meta key for the per-post "Do not send to Discord" checkbox (see
+ * includes/skip-notification.php for the meta box that manages it).
+ */
+if ( ! defined( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_SKIP_META' ) ) {
+    define( 'INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_SKIP_META', '_init_plugin_suite_pulse_for_discord_skip' );
+}
+
+/**
  * Helpers
  */
 
@@ -45,6 +53,13 @@ function init_plugin_suite_pulse_for_discord_get_selectable_post_types() {
     $post_types = get_post_types( array( 'public' => true ), 'objects' );
     unset( $post_types['attachment'] );
     return $post_types;
+}
+
+// Whether a specific post has been opted out of ALL Discord notifications
+// (publish/update AND Hot Post Milestones) via its own "Do not send to
+// Discord" checkbox — see includes/skip-notification.php.
+function init_plugin_suite_pulse_for_discord_post_is_skipped( $post_id ) {
+    return get_post_meta( $post_id, INIT_PLUGIN_SUITE_PULSE_FOR_DISCORD_SKIP_META, true ) === '1';
 }
 
 // Return trimmed plain-text excerpt (<= 280 chars)
@@ -183,6 +198,11 @@ function init_plugin_suite_pulse_for_discord_render_template( $template, $post )
 function init_plugin_suite_pulse_for_discord_build_payload( $post_id, $context = 'publish' ) {
     $post = get_post( $post_id );
     if ( ! $post ) return false;
+
+    // Per-post opt-out: the author explicitly checked "Do not send this
+    // post to Discord" — skip publish/update (and, separately, Hot Post
+    // Milestones checks this same flag in milestone-notify.php).
+    if ( init_plugin_suite_pulse_for_discord_post_is_skipped( $post_id ) ) return false;
 
     $opts = array(
         'enable'         => get_option( 'init_plugin_suite_pulse_for_discord_enable', '0' ) === '1',

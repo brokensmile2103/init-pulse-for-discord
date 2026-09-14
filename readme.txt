@@ -4,7 +4,7 @@ Tags: discord, webhook, notifications, publish, automation
 Requires at least: 5.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,7 @@ Key design goals:
 - Role tagging based on Categories & Tags  
   → When a post is in that taxonomy, that role is mentioned
 - **Per-Category/Tag Webhook routing** — optionally send a term's posts to their own dedicated Discord webhook (own Username/Avatar), with a per-term "Only send to this webhook" switch to skip the global webhook entirely
+- **Per-post "Do not send to Discord" checkbox** — opt an individual post out of every Discord notification (publish/update and Hot Post Milestones), shown while the post is unpublished, or after publishing if "Notify on update" is enabled
 - **Rich Discord embeds** — title, description, accent color, footer, and timestamp (with a plain-text fallback mode)
 - **Send Test Message** button on the settings screen — verify your webhook without publishing a post
 - **Delivery Log** — a rolling snapshot of the most recent deliveries (success/error) for troubleshooting, stored lightly in `wp_options` with `autoload = no`
@@ -151,6 +152,9 @@ Yes. Open that **Category** or **Tag** and fill in its own "Discord Webhook URL"
 = Can I use the webhook without role mentions? =  
 Yes — simply leave the Role ID fields empty.
 
+= Can I stop a specific post from being sent to Discord? =  
+Yes. On the post edit screen, tick **"Do not send this post to Discord"** in the Discord Notification box before publishing. It also covers that post's future Hot Post Milestones alerts. Once a post is published, the checkbox stays available only if "Notify on post update" is enabled — otherwise there's nothing left for it to suppress.
+
 = Does this plugin override or remove publish hooks? =  
 No. **It never removes actions or filters.**  
 Everything is additive and safe-by-default.
@@ -162,6 +166,11 @@ It's an optional feature that sends a Discord alert when a post's total view cou
 No. The connection is checked automatically on every page load, so milestone notifications start working as soon as Init View Count is active — no re-save needed.
 
 == Changelog ==
+
+= 1.5 – September 14, 2026 =
+* Added: **Per-post "Do not send to Discord"** checkbox — opt an individual post out of every Discord notification (publish/update, and any future Hot Post Milestones alerts) for that post only.
+* The checkbox is shown on the post edit screen while the post hasn't been published yet; once published, it stays visible only if "Notify on post update" is enabled, since that's the only remaining notification left for it to suppress.
+* No breaking changes — posts are notified exactly as before unless this checkbox is explicitly ticked.
 
 = 1.4 – September 13, 2026 =
 * Added: **Per-Category/Tag Webhook** — set a dedicated Discord Webhook URL (with its own Username/Avatar override) directly on any Category or Tag edit screen.

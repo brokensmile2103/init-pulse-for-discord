@@ -237,6 +237,12 @@ function init_plugin_suite_pulse_for_discord_on_view_counted( $post_id, $updated
 
     if ( ! $built ) return;
 
+    // Per-post opt-out: same flag as publish/update notifications (see
+    // includes/skip-notification.php). Checked after the "notified"
+    // meta update above so a skipped post's milestones still won't be
+    // re-evaluated on every subsequent view.
+    if ( init_plugin_suite_pulse_for_discord_post_is_skipped( $post_id ) ) return;
+
     list( $payload, $opts ) = $built;
 
     $targets = init_plugin_suite_pulse_for_discord_collect_webhook_targets( $post_id, $opts );

@@ -19,7 +19,7 @@ msgstr ""
 msgid "Init Pulse For Discord"
 msgstr "Init Pulse For Discord"
 
-#: init-pulse-for-discord.php:48
+#: init-pulse-for-discord.php:49
 msgid "Settings"
 msgstr "Cài đặt"
 
@@ -309,8 +309,8 @@ msgid "✅ Test message from %s — Init Pulse For Discord is configured correct
 msgstr "✅ Tin nhắn thử từ %s — Init Pulse For Discord đã được cấu hình đúng."
 
 #: includes/ajax-test.php:81
-#: includes/milestone-notify.php:266
-#: includes/webhook-dispatcher.php:340
+#: includes/milestone-notify.php:272
+#: includes/webhook-dispatcher.php:360
 msgid "Delivered"
 msgstr "Đã gửi"
 
@@ -319,20 +319,20 @@ msgid "Test message sent! Check your Discord channel."
 msgstr "Đã gửi tin nhắn thử! Kiểm tra kênh Discord của bạn."
 
 #. translators: %d: HTTP status code returned by Discord.
-#: includes/webhook-dispatcher.php:303
+#: includes/webhook-dispatcher.php:323
 #, php-format
 msgid "Discord webhook responded with HTTP %d."
 msgstr "Webhook Discord phản hồi với mã HTTP %d."
 
-#: includes/webhook-dispatcher.php:308
+#: includes/webhook-dispatcher.php:328
 msgid "Discord webhook unreachable after retries."
 msgstr "Không thể kết nối webhook Discord sau nhiều lần thử lại."
 
-#: includes/webhook-dispatcher.php:318
+#: includes/webhook-dispatcher.php:338
 msgid "New post"
 msgstr "Bài viết mới"
 
-#: includes/webhook-dispatcher.php:319
+#: includes/webhook-dispatcher.php:339
 msgid "Update"
 msgstr "Cập nhật"
 
@@ -391,7 +391,7 @@ msgid "The milestone that was just crossed"
 msgstr "Mốc lượt xem vừa đạt được"
 
 #. translators: 1: post title, 2: milestone view count (formatted).
-#: includes/milestone-notify.php:247
+#: includes/milestone-notify.php:253
 #, php-format
 msgid "Milestone (%2$s views): %1$s"
 msgstr "Mốc %2$s lượt xem: %1$s"
@@ -400,11 +400,6 @@ msgstr "Mốc %2$s lượt xem: %1$s"
 #: init-pulse-for-discord.php
 msgid "https://inithtml.com/plugin/init-pulse-for-discord/"
 msgstr "https://inithtml.com/plugin/init-pulse-for-discord/"
-
-#. Description of the plugin
-#: init-pulse-for-discord.php
-msgid "Send notifications to Discord via webhooks. Custom post types, rich embeds, per-category/tag webhooks, test messages, delivery log, and hot-post milestone alerts."
-msgstr "Gửi thông báo tới Discord qua webhook. Hỗ trợ custom post type, rich embed, webhook riêng theo danh mục/thẻ, tin nhắn thử, delivery log, và thông báo mốc lượt xem nổi bật."
 
 #. Author of the plugin
 #: init-pulse-for-discord.php
@@ -489,7 +484,28 @@ msgid "Skip the global webhook for posts in this term."
 msgstr "Bỏ qua webhook chung đối với bài viết thuộc danh mục/thẻ này."
 
 #. translators: %s: category or tag name.
-#: includes/webhook-dispatcher.php:133
+#: includes/webhook-dispatcher.php:148
 #, php-format
 msgid "Term: %s"
 msgstr "Danh mục/Thẻ: %s"
+
+#. Description of the plugin
+#: init-pulse-for-discord.php
+msgid "Send notifications to Discord via webhooks. Custom post types, rich embeds, per-category/tag webhooks, per-post opt-out, test messages, delivery log, and hot-post milestone alerts."
+msgstr "Gửi thông báo tới Discord qua webhook. Hỗ trợ custom post type, rich embed, webhook riêng theo danh mục/thẻ, cho phép từng bài viết không gửi, tin nhắn thử, delivery log, và thông báo mốc lượt xem nổi bật."
+
+#: includes/skip-notification.php:45
+msgid "Discord Notification"
+msgstr "Thông báo Discord"
+
+#: includes/skip-notification.php:68
+msgid "Do not send this post to Discord"
+msgstr "Không gửi bài viết này lên Discord"
+
+#: includes/skip-notification.php:73
+msgid "Skips the update notification (and any future view-milestone alerts) for this post."
+msgstr "Bỏ qua thông báo cập nhật (và mọi thông báo mốc lượt xem sau này) đối với bài viết này."
+
+#: includes/skip-notification.php:75
+msgid "Skips the publish notification (and any future update or view-milestone alerts) for this post."
+msgstr "Bỏ qua thông báo đăng bài (và mọi thông báo cập nhật hoặc mốc lượt xem sau này) đối với bài viết này."
